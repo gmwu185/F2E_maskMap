@@ -1,0 +1,37 @@
+$primaryColor: red;
+
+
+
+/* base & reset
+-------------------------------------------------- */
+
+@import 'base/normalize';
+
+body {
+  // color: $primaryColor;
+}
+
+/* End of base & reset
+-------------------------------------------------- */
+
+
+/* vendors
+-------------------------------------------------- */
+
+@import 'vendors/leaflet';
+@import 'vendors/MarkerCluster.Default';
+@import 'vendors/MarkerCluster';
+@import 'vendors/L.Control.Locate.min';
+
+/* End of vendors
+-------------------------------------------------- */
+
+
+
+/* components
+-------------------------------------------------- */
+
+@import 'components/coustonMap';
+
+/* End of components
+-------------------------------------------------- */

@@ -11,5 +11,28 @@
     "editorGroup.border": "#ab307e",
     "tab.activeBorder": "#ab307e"
   },
-  "peacock.color": "#832561"
+  "peacock.color": "#832561",
+  /* LiveSassCompile set */
+  "liveSassCompile.settings.formats": [
+    // This is Default.
+    // {
+    //   "format": "expanded",
+    //   "extensionName": ".css",
+    //   // "savePath": null
+    //   "savePath": "./assets/css"
+    // },
+    // You can add more
+    {
+        "format": "compressed",
+        "extensionName": ".css",
+        "savePath": "./assets/css"
+    },
+    // // More Complex
+    // {
+    //     "format": "compressed",
+    //     "extensionName": ".min.css",
+    //     "savePath": "~/../css/"
+    // }
+  ],
+  "liveServer.settings.port": 5501,
 }
