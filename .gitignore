@@ -6,7 +6,7 @@
 /inbox
 
 # tools
-.vscode
+# .vscode
 node_modules
 public
 bower_components
