@@ -1,0 +1,15 @@
+# systen
+.DS_Store
+*/.DS_Store
+
+# folder
+/inbox
+
+# tools
+.vscode
+node_modules
+public
+bower_components
+.tmp
+package-lock.json
+.publish 
