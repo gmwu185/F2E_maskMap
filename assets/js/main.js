@@ -1,19 +1,18 @@
-// 預設位置
 var _data = {
-  jsonData: {},
+  jsonData: {}, // AJAX 取得資料
   positions:{
-    default: {
+    default: { // 預設地理位置
       lat: 24.1338065,
       lon: 120.658394,
       name: '臺中市'
     },
-    get: {
+    get: { // 透過服務另外取得或更動地位理位置
       lat: '',
       lon: '',
       name: ''
     },
   },
-  iconTypePath: {
+  iconTypeFilePath: { // 圖標圖示路徑
     anchor: './assets/img/marker-icon-2x-anchor.png',
     greenIcon: './assets/img/marker-icon-2x-green.png', 
     redIcon: './assets/img/marker-icon-2x-red.png', 
@@ -22,69 +21,59 @@ var _data = {
   },
 };
 
-function ajaxFn(){
-  var xhr = new XMLHttpRequest();
-  // 取得資料於本地端
-  // xhr.open("get", "data/points.json");
-  // 取得資料於遠端
-  xhr.open(
-    "get",
-    "https://raw.githubusercontent.com/kiang/pharmacies/master/json/points.json"
-  );
-  xhr.send();
-  xhr.onload = function(e){
-    if (xhr.readyState === 4 && xhr.status === 200) {
-      _data.jsonData = JSON.parse(xhr.responseText).features;
-    }
-  };
-};
-
-// 取得裝置的地理位置
+/** Geolocation API 取得裝置的地理位置
+ */
 function getLocation() {
 	if (navigator.geolocation) {
+    // 瀏覽器或裝置可使用 Geolocation API
+    navigator.geolocation.getCurrentPosition(success, error);
     function success(position) {
       // console.log('navigator position', position);
       _data.positions.get.lat = position.coords.latitude;
       _data.positions.get.lon = position.coords.longitude;
-      // console.log(
-      //   'getCurrentPosition() position.lat', _data.positions.get.lat, 
-      //   'getCurrentPosition() position.lon', _data.positions.get.lon
-      // );
+      console.log(
+        'getCurrentPosition() position.lat', _data.positions.get.lat, 
+        'getCurrentPosition() position.lon', _data.positions.get.lon
+      );
+      getIPLocation();
       renderMap( _data.positions.get.lat, _data.positions.get.lon, _data.jsonData);
     };
-    function error(position) {
+    function error() {
       renderMap(_data.positions.default.lat, _data.positions.default.lon, _data.jsonData);
     };
-    navigator.geolocation.getCurrentPosition(success, error);
 	} else {
-    /** 瀏灠器無法使用 Geolocation API
-      * 由裝置IP來取得使用者的地理位置。採用 ipinfo.io 方案 (https://ipinfo.io/developers)
-    */
-    // function getIPLocation() {
-    //   var corsUrl = 'https://cors-anywhere.herokuapp.com/';
-    //   var url = "https://ipinfo.io"
-    //   $.getJSON(url, function(data) {
-    //     console.log('data', data);
-    //     var loc = data.loc.split(',');
-    //     position.lat = parseFloat(loc[0]);
-    //     position.lon = parseFloat(loc[1]);
-    //     console.log('getJSON position.lat', position.lat);
-    //     console.log('getJSON position.lon', position.lon);
-    //   })
-    //     .fail(function() {
-    //       alert("不知道在那理，ipinfo.io 取不到地理座標位置");
-    //       // renderMap(position.lat, position.lon);
-    //     })
-    //     .always(function() {
-          
-    //     });
-    // };
-    // getIPLocation();
-	}
+    // 瀏灠器無法使用 Geolocation API 由裝置IP來取得使用者的地理位置。
+    getIPLocation();
+    renderMap( _data.positions.get.lat, _data.positions.get.lon, _data.jsonData);
+  }
 }
 
-
-
+/** ipinfo.io (https://ipinfo.io/developers) 取得使用者的地理位置
+ * 定位較為精準，服務無法連續呼叫使用 IP 會被鎖
+ * 資料來源一：[ipinfo.io - jQuery 取得使用者地理位置](https://codepen.io/meyu/pen/pPeBzx)
+ * 資料來源二：[用 https://ipinfo.io/ 檢查IP來源](http://itopnet.blogspot.com/2018/06/httpsipinfoio-ip.html ) 文章介紹 (https://ipinfo.io/168.95.1.1/json) 直接由瀏覽器開啟 JSON 頁面，裡面會有使用者的地理位置資料，'168.95.1.1' -> 中華電信 DNS 加速。
+ * 會有 CORS 無法取得 AJAX 資料，透過代理伺服器 (https://cors-anywhere.herokuapp.com/) 處理。
+*/
+function getIPLocation() {
+  var corsUrl = 'https://cors-anywhere.herokuapp.com/';
+  var url = "https://ipinfo.io/168.95.1.1/json";
+  var xhr = new XMLHttpRequest();
+  xhr.open(
+    "get",
+    corsUrl+url,
+  );
+  xhr.send();
+  xhr.onload = function(){
+    ipJsonData = JSON.parse(xhr.responseText);
+    var locSplit = ipJsonData.loc.split(',');
+    _data.positions.get.lat = parseFloat(locSplit[0]);
+    _data.positions.get.lon = parseFloat(locSplit[1]);
+    console.log(
+      'parseFloat(locSplit[0])', parseFloat(locSplit[0]),
+      'parseFloat(locSplit[1])', parseFloat(locSplit[1])
+    );
+  }
+};
 
 /** 使用地圖框架 (leaflet) 與圖資服務 (OSM) 執行渲染畫面
   * @param lat 緯度(LatLng)
@@ -101,9 +90,7 @@ function renderMap(lat, lon, data){
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
   }).addTo(map);
-
   
-
   /** 
     * @param iconPath string 不同狀態圖示圖片路徑
   */
@@ -123,26 +110,25 @@ function renderMap(lat, lon, data){
   map.addLayer(
     L.marker(
       [ lat, lon ], 
-      { icon: makeMarkerIconFn( _data.iconTypePath.anchor ) }
+      { icon: makeMarkerIconFn( _data.iconTypeFilePath.anchor ) }
     )
   );
 
   var markers = new L.MarkerClusterGroup().addTo(map);
-
   for( let i=0; i<data.length; i++ ){
     var maskIconType;
     if( data[i].properties.mask_adult !== 0 && data[i].properties.mask_child !== 0){
       // 成人與小孩都有 -> greenIcon
-      maskIconType = makeMarkerIconFn( _data.iconTypePath.greenIcon );
+      maskIconType = makeMarkerIconFn( _data.iconTypeFilePath.greenIcon );
     } else if ( data[i].properties.mask_adult == 0 && data[i].properties.mask_child == 0 ) {
       // 成人與小孩都沒有 -> greyIcon
-      maskIconType = makeMarkerIconFn( _data.iconTypePath.greyIcon );
+      maskIconType = makeMarkerIconFn( _data.iconTypeFilePath.greyIcon );
     } else if ( data[i].properties.mask_child == 0 ) {
       // 小孩 == 0 -> redIcon
-      maskIconType = makeMarkerIconFn( _data.iconTypePath.redIcon );
+      maskIconType = makeMarkerIconFn( _data.iconTypeFilePath.redIcon );
     } else if ( data[i].properties.mask_adult == 0 ) {
       // 成人 == 0 -> violetIcon
-      maskIconType = makeMarkerIconFn( _data.iconTypePath.violetIcon );
+      maskIconType = makeMarkerIconFn( _data.iconTypeFilePath.violetIcon );
     }
     markers
       .addLayer(
@@ -166,9 +152,22 @@ function renderMap(lat, lon, data){
 };
 
 function init() {
-  ajaxFn();
-  getLocation();
-  // 畫面初始化執行函式
-  // window.onload = function(){};
+  var xhr = new XMLHttpRequest();
+  xhr.open(
+    "get",
+    // 取得資料於遠端
+    "https://raw.githubusercontent.com/kiang/pharmacies/master/json/points.json",
+    // 取得資料於本地端
+    // "data/points.json"
+  );
+  xhr.send();
+  xhr.onload = function(){
+    if (xhr.readyState === 4 && xhr.status === 200) {
+      _data.jsonData = JSON.parse(xhr.responseText).features;
+      getLocation();
+      // 畫面初始化執行函式
+      // window.onload = function(){};
+    };
+  };
 };
 init();
