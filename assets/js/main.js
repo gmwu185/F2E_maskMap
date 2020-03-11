@@ -75,6 +75,20 @@ function getIPLocation() {
   }
 };
 
+
+/* components
+-------------------------------------------------- */
+
+function bindMenu() {
+  document.querySelector('.js-toggleMenu__btn').addEventListener( 'click', function(e) { 
+    this.parentNode.classList.toggle('js-toggleMenu--switch');
+  });
+}
+
+/* End of components
+-------------------------------------------------- */
+
+
 /** 使用地圖框架 (leaflet) 與圖資服務 (OSM) 執行渲染畫面
   * @param lat 緯度(LatLng)
   * @param lon 經度(Longitude)
@@ -164,6 +178,7 @@ function init() {
   xhr.onload = function(){
     if (xhr.readyState === 4 && xhr.status === 200) {
       _data.jsonData = JSON.parse(xhr.responseText).features;
+      bindMenu();
       getLocation();
       // 畫面初始化執行函式
       // window.onload = function(){};

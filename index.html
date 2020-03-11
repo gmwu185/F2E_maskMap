@@ -4,10 +4,22 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>口罩地圖</title>
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.9/css/all.css" integrity="sha384-5SOiIsAziJl6AWe0HWRKTXlfcSHKmYV4RBF18PPJ173Kzn7jzMyFuTtk8JA7QQG1" crossorigin="anonymous"></link>
   <link rel="stylesheet" href="assets/css/all.css">
 </head>
 <body>
-  <div id="map">map</div>
+  <div class="toggleMenu toggleMenu--boxShadow toggleMenu--fontStyle">
+    <div class="toggleMenu__btn toggleMenu--textShadow js-toggleMenu__btn">
+      <i class="fas fa-chevron-circle-right toggleMenu__btn__icon"></i>
+    </div>
+    <ul class="toggleMenu__list">
+      <li>Android's Material Design Hamburger Animation</li>
+      <li>Adapted for the web by <a href="https://swirlycheetah.com" target="_blank">Chris Wheatley</a></li>
+      <li><a href="https://github.com/swirlycheetah/hamburger" target="_blank">Available on GitHub</a></li>
+      <li><a href="https://twitter.com/swirlycheetah" target="_blank">Follow me on Twitter @swirlycheetah</a></li>
+    </ul>
+  </div>
+  <div id="map"></div>
 
   <script src="./assets/js/vendors/leaflet.js"></script>
   <!-- markercluster 套件 -->
