@@ -1,4 +1,4 @@
-$primaryColor: red;
+$primaryColor: #64C0A9;
 
 
 
@@ -7,9 +7,9 @@ $primaryColor: red;
 
 @import 'base/normalize';
 
-body {
-  // color: $primaryColor;
-}
+// body {
+//   // color: $primaryColor;
+// }
 
 /* End of base & reset
 -------------------------------------------------- */
@@ -33,6 +33,7 @@ body {
 
 @import 'components/coustonMap';
 @import 'components/hamburger';
+@import 'components/load';
 
 /* End of components
 -------------------------------------------------- */

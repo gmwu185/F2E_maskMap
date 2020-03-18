@@ -8,18 +8,24 @@
   <link rel="stylesheet" href="assets/css/all.css">
 </head>
 <body>
+  <div class="load js-load">
+    <div class="load__container">
+      <img class="load__container__icon" src="assets/img/loadMaskIcon.png" alt="">
+      <p class="load__container__str">讀取中 ...</p>
+    </div>
+  </div>
   <div class="toggleMenu toggleMenu--boxShadow toggleMenu--fontStyle">
     <div class="toggleMenu__btn toggleMenu--textShadow js-toggleMenu__btn">
       <i class="fas fa-chevron-circle-right toggleMenu__btn__icon"></i>
     </div>
     <ul class="toggleMenu__list">
-      <li>Android's Material Design Hamburger Animation</li>
-      <li>Adapted for the web by <a href="https://swirlycheetah.com" target="_blank">Chris Wheatley</a></li>
-      <li><a href="https://github.com/swirlycheetah/hamburger" target="_blank">Available on GitHub</a></li>
-      <li><a href="https://twitter.com/swirlycheetah" target="_blank">Follow me on Twitter @swirlycheetah</a></li>
+      <li><strong>Map:</strong> OpenStreetMap</li>
+      <li><strong>Lib & Plugins:</strong> Leaflet & MarkerClusterGroup</li>
+      <li><strong>designer:</strong> JimmyWu</li>
+      <li><a href="https://github.com/gmwu185/F2E_maskMap" target="_blank">GitHub</a></li>
     </ul>
   </div>
-  <div id="map"></div>
+  <div id="map" class='js-map'></div>
 
   <script src="./assets/js/vendors/leaflet.js"></script>
   <!-- markercluster 套件 -->

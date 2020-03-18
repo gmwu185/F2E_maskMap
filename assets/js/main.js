@@ -21,9 +21,13 @@ var _data = {
   },
 };
 
+/** DOM 元素 */
+var mapEL = document.getElementById('map');
+
+
 /** Geolocation API 取得裝置的地理位置
  */
-function getLocation() {
+function getGeolocation() {
 	if (navigator.geolocation) {
     // 瀏覽器或裝置可使用 Geolocation API
     navigator.geolocation.getCurrentPosition(success, error);
@@ -37,14 +41,17 @@ function getLocation() {
       );
       getIPLocation();
       renderMap( _data.positions.get.lat, _data.positions.get.lon, _data.jsonData);
+      lodeAnimation();
     };
     function error() {
       renderMap(_data.positions.default.lat, _data.positions.default.lon, _data.jsonData);
+      lodeAnimation();
     };
 	} else {
     // 瀏灠器無法使用 Geolocation API 由裝置IP來取得使用者的地理位置。
     getIPLocation();
     renderMap( _data.positions.get.lat, _data.positions.get.lon, _data.jsonData);
+    lodeAnimation();
   }
 }
 
@@ -82,11 +89,42 @@ function getIPLocation() {
 function bindMenu() {
   document.querySelector('.js-toggleMenu__btn').addEventListener( 'click', function(e) { 
     this.parentNode.classList.toggle('js-toggleMenu--switch');
+    mapEL.classList.toggle('js-map--switch');
   });
+}
+
+function lodeAnimation(){
+  var lodeEL = document.querySelector('.js-load');
+  var zIndexZero = function (){
+    setTimeout(function(){
+      lodeEL.setAttribute("style", "opacity: 0; z-index: 0;");
+    }, 1000);
+  }
+  var opacityZero = function(callback){
+    lodeEL.setAttribute("style", "opacity: 0;");
+    typeof callback === 'function' ? callback() : ''
+  }
+  opacityZero(zIndexZero);
 }
 
 /* End of components
 -------------------------------------------------- */
+
+
+/** 
+  * @param iconPath string 不同狀態圖示圖片路徑
+*/
+function makeMarkerIconFn( iconPath ) {
+  var iconFormat = {
+    iconUrl: iconPath,
+    shadowUrl: './assets/img/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
+  };
+  return new L.Icon( iconFormat );
+};
 
 
 /** 使用地圖框架 (leaflet) 與圖資服務 (OSM) 執行渲染畫面
@@ -95,40 +133,31 @@ function bindMenu() {
   * @param data AJAX 取得後傳入的資料
 */
 function renderMap(lat, lon, data){
-  
-  var map = L.map('map', {
+
+  var map = L.map(mapEL, {
     center: [lat, lon],
     zoom: 16 // zoom 地圖最大可放大到 18
   });
   
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-  }).addTo(map);
+  L.tileLayer(
+    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', 
+    {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }
+  ).addTo(map);
   
-  /** 
-    * @param iconPath string 不同狀態圖示圖片路徑
-  */
-  function makeMarkerIconFn( iconPath ) {
-    var iconFormat = {
-      iconUrl: iconPath,
-      shadowUrl: './assets/img/marker-shadow.png',
-      iconSize: [25, 41],
-      iconAnchor: [12, 41],
-      popupAnchor: [1, -34],
-      shadowSize: [41, 41]
-    };
-    return new L.Icon( iconFormat );
-  };
+  // 使用 leaflet 框架原生 marker() 圖層加入定位點圖示，不使用 MarkerClusterGroup 才不會被群化。
+  L.marker(
+    [ lat, lon ], 
+    { 
+      icon: makeMarkerIconFn( _data.iconTypeFilePath.anchor ),
+      clickable: false, // 可點擊
+      // draggable: true, // 可拖移
+    }
+  ).addTo(map)
 
-  // 使用 leaflet 框架原生圖層加入定位點圖示
-  map.addLayer(
-    L.marker(
-      [ lat, lon ], 
-      { icon: makeMarkerIconFn( _data.iconTypeFilePath.anchor ) }
-    )
-  );
+  var markers = new L.MarkerClusterGroup();
 
-  var markers = new L.MarkerClusterGroup().addTo(map);
   for( let i=0; i<data.length; i++ ){
     var maskIconType;
     if( data[i].properties.mask_adult !== 0 && data[i].properties.mask_child !== 0){
@@ -162,7 +191,10 @@ function renderMap(lat, lon, data){
           `)
       )
   };
-  // map.addLayer(markers);
+
+  // 輸出方式選一種
+  // markers.addTo(map);
+  map.addLayer(markers);
 };
 
 function init() {
@@ -179,10 +211,10 @@ function init() {
     if (xhr.readyState === 4 && xhr.status === 200) {
       _data.jsonData = JSON.parse(xhr.responseText).features;
       bindMenu();
-      getLocation();
-      // 畫面初始化執行函式
-      // window.onload = function(){};
+      getGeolocation();
     };
   };
+  // 畫面初始化執行函式
+  // window.onload = function(){};
 };
 init();
