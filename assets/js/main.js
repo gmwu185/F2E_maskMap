@@ -2,9 +2,9 @@ var _data = {
   jsonData: {}, // AJAX 取得資料
   positions:{
     default: { // 預設地理位置
-      lat: 24.1338065,
-      lon: 120.658394,
-      name: '臺中市'
+      lat: 24.1372593,
+      lon: 120.6866659,
+      name: '台中火車站'
     },
     get: { // 透過服務另外取得或更動地位理位置
       lat: '',
@@ -138,10 +138,17 @@ function renderMap(lat, lon, data){
     center: [lat, lon],
     zoom: 16 // zoom 地圖最大可放大到 18
   });
+
+  var OSMHost = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+  var omniscaleHostDefault = 'https://maps.omniscale.net/v2/{id}/style.default/{z}/{x}/{y}.png'; // omniscale 預設主題圖磚圖片路徑
+  var omniscaleHostGrayscale = 'https://maps.omniscale.net/v2/{id}/style.grayscale/{z}/{x}/{y}.png'; // omniscale 灰階主題圖磚圖片路徑
   
   L.tileLayer(
-    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', 
+    // OSMHost, 
+    // omniscaleHostDefault, // omniscale 預設主題圖磚
+    omniscaleHostGrayscale, // omniscale 灰階主題圖磚
     {
+      id: 'maskmap-7dd36ead', // omniscale-api-key
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }
   ).addTo(map);
@@ -154,7 +161,7 @@ function renderMap(lat, lon, data){
       clickable: false, // 可點擊
       // draggable: true, // 可拖移
     }
-  ).addTo(map)
+  ).addTo(map).bindPopup('你的目前定位位置')
 
   var markers = new L.MarkerClusterGroup();
 
