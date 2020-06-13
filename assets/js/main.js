@@ -143,15 +143,30 @@ function renderMap(lat, lon, data){
   var omniscaleHostDefault = 'https://maps.omniscale.net/v2/{id}/style.default/{z}/{x}/{y}.png'; // omniscale 預設主題圖磚圖片路徑
   var omniscaleHostGrayscale = 'https://maps.omniscale.net/v2/{id}/style.grayscale/{z}/{x}/{y}.png'; // omniscale 灰階主題圖磚圖片路徑
   
+  /* tileLayer 圖資
+  -------------------------------------------------- */
   L.tileLayer(
-    // OSMHost, 
-    // omniscaleHostDefault, // omniscale 預設主題圖磚
-    omniscaleHostGrayscale, // omniscale 灰階主題圖磚
+    OSMHost, 
     {
-      id: 'maskmap-7dd36ead', // omniscale-api-key
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }
   ).addTo(map);
+  /* End of tileLayer 圖資
+  -------------------------------------------------- */
+
+  /* omniscale 預設主題圖磚，需與上方 tileLayer 圖資服務選一註解啟用
+  -------------------------------------------------- */
+  // L.tileLayer(
+  //   omniscaleHostDefault, // omniscale 預設主題圖磚
+  //   // omniscaleHostGrayscale, // omniscale 灰階主題圖磚
+  //   {
+  //     id: 'maskmap-7dd36ead', // omniscale-api-key
+  //     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  //   }
+  // ).addTo(map);
+  /* End of omniscale 預設主題圖磚
+  -------------------------------------------------- */
+  
   
   // 使用 leaflet 框架原生 marker() 圖層加入定位點圖示，不使用 MarkerClusterGroup 才不會被群化。
   L.marker(
