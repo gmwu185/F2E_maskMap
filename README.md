@@ -9,4 +9,4 @@
 
 # 使用資源
 - [Leaflet + OpenStreetMap 地圖應用開發](https://www.youtube.com/watch?v=pUizu62dlnY)
-- [講議連結](https://quip.com/vdqYAiFHHkaV)
+- [講義連結](https://quip.com/vdqYAiFHHkaV)
